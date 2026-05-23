@@ -1,0 +1,20 @@
+[package]
+name = "sentinel-ebpf"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+[dependencies]
+aya-ebpf = "0.1.0"
+aya-log-ebpf = "0.1.0"
+network-types = "0.0.5"
+
+[profile.release]
+lto = true
+panic = "abort"
+codegen-units = 1
+debug = false
+
+[[bin]]
+name = "sentinel-ebpf"
+path = "src/main.rs"

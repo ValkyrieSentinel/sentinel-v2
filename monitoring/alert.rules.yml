@@ -1,0 +1,39 @@
+groups:
+  - name: sentinel_alerts
+    rules:
+      - alert: TrapDown
+        expr: up == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Critical failure: Trap {{ $labels.instance }} is offline"
+          description: "Service {{ $labels.job }} ({{ $labels.instance }}) has been unreachable for more than 1 minute."
+
+      - alert: HighAttackRate
+        expr: rate(sentinel_trap_connections_total[1m]) > 20
+        for: 30s
+        labels:
+          severity: warning
+        annotations:
+          summary: "Attack alert on {{ $labels.instance }}"
+          description: "Request rate exceeded 20 req/sec. The system is likely being actively scanned or brute-forced."
+
+      - alert: GhostNetMusicalOverload
+        expr: rate(sentinel_ghost_net_trapped_total[1m]) > 10
+        for: 1m
+        labels:
+          severity: info
+          service: "ghost-net"
+        annotations:
+          summary: "Bot overload on port {{ $labels.port }}"
+          description: "Bots are trapped in playlist {{ $labels.genre }}. Retention rate: {{ $value }} bots/sec."
+
+      - alert: TrapHighMemoryUsage
+        expr: process_resident_memory_bytes{job=~"sentinel.*"} > 1e+09
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High RAM usage in {{ $labels.job }}"
+          description: "Trap is consuming over 1 GB of RAM. Verify the number of concurrent 'musical' connections."

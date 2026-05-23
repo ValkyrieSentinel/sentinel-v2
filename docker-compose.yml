@@ -1,0 +1,68 @@
+version: '3.8'
+
+services:
+  postgres_db:
+    image: postgres:15-alpine
+    container_name: sentinel_pg
+    environment:
+      POSTGRES_DB: sentinel_main
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: your_strong_password
+    volumes:
+      - ./data/postgres:/var/lib/postgresql/data
+    networks:
+      - sentinel_net
+
+  clickhouse_db:
+    image: clickhouse/clickhouse-server:latest
+    container_name: sentinel_ch
+    ulimits:
+      nofile: { soft: 262144, hard: 262144 }
+    volumes:
+      - ./data/clickhouse:/var/lib/clickhouse
+    networks:
+      - sentinel_net
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: sentinel_prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - /home/helga/sentinel-v2/monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - /home/helga/sentinel-v2/monitoring/prometheus/alert.rules.yml:/etc/prometheus/alert.rules.yml
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+    networks:
+      - sentinel_net
+    depends_on:
+      - alertmanager
+
+  alertmanager:
+    image: prom/alertmanager:latest
+    container_name: sentinel_alertmanager
+    ports:
+      - "9093:9093"
+    volumes:
+      - /home/helga/sentinel-v2/monitoring/prometheus/alertmanager.yml:/etc/alertmanager/alertmanager.yml
+    command:
+      - '--config.file=/etc/alertmanager/alertmanager.yml'
+    networks:
+      - sentinel_net
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: sentinel_grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_INSTALL_PLUGINS=grafana-worldmap-panel
+    networks:
+      - sentinel_net
+    depends_on:
+      - prometheus
+      - clickhouse_db
+
+networks:
+  sentinel_net:
+    driver: bridge
