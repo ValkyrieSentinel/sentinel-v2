@@ -1,7 +1,10 @@
 target/
+build/
+*.o
+*.pdf
+fonts/
+__pycache__/
+*.pyc
 .DS_Store
-*.log
-.env
-.idea/
 .vscode/
-data/
+.idea/

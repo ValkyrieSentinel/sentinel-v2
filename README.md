@@ -1,36 +1,30 @@
-# SENTINEL V2 
+# Sentinel v2: Polyglot Security Research Framework
 
-**Autonomous eBPF-based Defense Infrastructure**
+A comprehensive, multi-language security framework combining eBPF/XDP kernel filtering, deep packet inspection (DPI), and distributed honeypot networks.
 
-Sentinel V2 is a hybrid, high-performance security platform designed for zero-latency traffic filtering and active threat mitigation. It combines the speed of kernel-level filtering with the intelligent deception of distributed honeypot systems.
+## Overview
+Sentinel v2 is an experimental security research platform that demonstrates defense-in-depth strategies using a polyglot architecture. Each component is written in the language best suited for its specific task.
 
-###  Architecture Stack
-* **Data Plane (Kernel):** eBPF/XDP written in Rust (Aya) for line-rate packet dropping.
-* **Control Plane (User Space):** * **Rust:** Orchestrator & logic controller.
-    * **C++:** Stateful Deep Packet Inspection (DPI) agent.
-    * **Go/Elixir:** Distributed "Ghost Network" honeypots to exhaust attacker resources.
-* **Observability:** Prometheus & Grafana stack for real-time attack visualization.
+## Architecture
+- Kernel Layer (Rust + eBPF/XDP): High-performance packet filtering, LPM Trie IP lists, SYN-flood detection.
+- DPI Layer (C++ + libbpf): Deep packet inspection, signature-based attack detection, OS fingerprinting.
+- Honeypot Layer (Multi-Language): Python (fake audio streams), Go (Prometheus metrics traps), C++ (fake directory labyrinth), Elixir (JSON-logging traps).
+- Monitoring Layer: Prometheus metrics, real-time eBPF stats, automated reporting.
 
-###  Key Capabilities
-* **Kernel-level Filtering:** Immediate blocking of malicious IP addresses using `LpmTrie` and `HashMap`.
-* **Stateful DPI:** Behavioral analysis and fingerprinting (TTL/TCP Window).
-* **Active Deception:** Distributed traps ("Ghost Network") that force attackers into resource-heavy "conversations."
-* **Auto-Adaptive:** Automated blacklist management based on real-time threat telemetry.
+## Why Polyglot?
+- Rust: Memory-safe kernel programming.
+- C++: High-performance DPI with pcap.
+- Go: Concurrent honeypots with metrics.
+- Elixir: Fault-tolerant trap monitoring.
 
-###  Quick Start
-1. **Build the eBPF Kernel:**
-   ```bash
-   cd kernel
-   cargo build --release --target=bpfel-unknown-none
-   ```
-2. **Launch the Orchestrator:**
-   ```bash
-   cargo run --release
-   ```
-3. **Deploy Traps:**
-   ```bash
-   go run main.go
-   ```
+## Build and Run
+1. Prerequisites: Rust nightly, cargo, GCC, Go, Elixir, Python 3, libbpf, pcap-dev.
+2. Build eBPF: cargo build --release --target=bpfel-unknown-none
+3. Build User-space: cargo build --release, go build, g++ -o dpi dpi.cpp
+4. Run: sudo ./target/release/sentinel-v2
 
+## Security Notice
+Intended strictly for authorized security research and educational purposes. The author assumes no liability for misuse.
 
-
+## License
+AGPL-3.0. Part of the ValkyrieSentinel ecosystem.
