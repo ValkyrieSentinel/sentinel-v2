@@ -27,4 +27,4 @@ Sentinel v2 is an experimental security research platform that demonstrates defe
 Intended strictly for authorized security research and educational purposes. The author assumes no liability for misuse.
 
 ## License
-AGPL-3.0. Part of the ValkyrieSentinel ecosystem.
+MIT. Part of the ValkyrieSentinel ecosystem.
